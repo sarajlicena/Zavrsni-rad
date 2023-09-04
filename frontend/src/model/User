@@ -1,0 +1,15 @@
+class User{
+    constructor(firstName,lastName,birthday,sex,height, weight, email, password, username){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthday = birthday;
+        this.sex = sex;
+        this.height = height;
+        this.weight = weight
+        this.email = email;
+        this.password = password;
+        this.username = username
+    }
+}
+
+export default User;

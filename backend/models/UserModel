@@ -1,0 +1,96 @@
+const db = require("../db/index");
+
+module.exports = class User{ 
+    constructor(firstName, lastName, birthday, sex, height, weight, email, password, username){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthday = birthday;
+        this.sex = sex;
+        this.height = height;
+        this.weight = weight;
+        this.email = email;
+        this.password = password;
+        this.username = username;
+    }
+
+    static async checkId(userId){
+        let sql = `
+            SELECT * FROM korisnik where idkorisnika = $1
+        `;
+
+        try{
+            let result =await db.query(sql,[userId]);
+            if(result.rowCount > 0)
+                return -1;
+
+            return null;
+
+        }catch (e){
+            console.log(e);
+        }
+    }
+
+    static async checkEmail(email){
+        let sql = `
+            SELECT * FROM korisnik where email = $1
+        `;
+
+        try{
+            let result =await db.query(sql,[email]);
+            if(result.rowCount > 0)
+                return "Account with that email already exists";
+
+            return null;
+
+        }catch (e){
+            console.log(e);
+        }
+    }
+
+    static async checkPassword(email,password){
+        let sql = `
+            SELECT * FROM korisnik WHERE email = $1 AND lozinka = $2;
+        `;
+
+        try {
+            let result = await db.query(sql, [email, password]);
+            return result.rows;
+
+        } catch (e){
+            return false;
+        }
+    }
+
+    async insertNewUser(){
+        let sql = `
+        INSERT INTO korisnik
+        (ime, prezime, datumrod, spol, visina, tezina, email, lozinka, username)
+        VALUES
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9);
+        `;
+
+        try{
+            let result = await db.query(sql, [this.firstName,this.lastName,this.birthday, 
+                                              this.sex, this.height, this.weight, this.email, this.password, this.username]);
+
+            return result.rowCount;
+        }catch (e){
+            console.log(e);
+            return false;
+        }
+    }
+
+    async getUser(){
+        let sql = `
+        SELECT * FROM korisnik where email = $1 AND lozinka = $2;
+        `;
+
+        try{
+            let result = await db.query(sql, [this.email,this.password]);
+            return result.rows > 0;
+        }catch (e){
+            console.log(e);
+            return false;
+        }
+    }
+}
